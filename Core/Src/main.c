@@ -30,6 +30,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 //#include <sys/_intsup.h>
 
@@ -217,6 +218,11 @@ const osSemaphoreAttr_t Juli_attributes = {
 /* USER CODE BEGIN PV */
 
 volatile uint32_t zhi_2;   //全局变量，存储从消息队列中获取的值，以便在Yundong线程中使用
+
+// --- DMA 非阻塞 printf 相关 ---
+DMA_HandleTypeDef hdma_usart1_tx;               // USART1_TX DMA 句柄
+static char debug_tx_buf[384];                   // 格式化缓冲区
+static volatile uint8_t debug_tx_busy = 0;       // DMA 发送忙标志
 volatile int16_t AX,AY,GZ;  //全局变量，存储加速度和陀螺仪原始值，以便在Tuoluoyi线程中使用
 volatile int16_t ax,ay,gz;  //全局变量，存储从消息队列中获取的加速度和陀螺仪原始值，以便在Lanyatouchuan线程中使用
 volatile uint8_t H1,H2,H3,H4,H5,H6,H7,H8;  //全局变量，存储8个灰度传感器通道的读取值，以便在Huidu线程中使用
@@ -348,8 +354,8 @@ HAL_TIM_Base_Start(&htim11);
 
 __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
 HAL_UART_Receive_DMA(&huart1, (uint8_t*)Serial_RxPacket, sizeof(Serial_RxPacket));
-printf("System Initialized\r\n");
-printf("System \r\n");
+debug_printf("System Initialized\r\n");
+  debug_printf("System \r\n");
 
 
   /* USER CODE END 2 */
@@ -753,6 +759,31 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+// ===== DMA 非阻塞 printf =====
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if(huart->Instance == USART1) {
+        debug_tx_busy = 0;  // DMA 发送完成
+    }
+}
+
+void debug_printf(const char *fmt, ...)
+{
+    if(debug_tx_busy) return;  // 上次 DMA 还没发完，丢掉这一帧
+    
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(debug_tx_buf, sizeof(debug_tx_buf), fmt, args);
+    va_end(args);
+    
+    uint16_t len = strlen(debug_tx_buf);
+    if(len > 0) {
+        debug_tx_busy = 1;
+        HAL_UART_Transmit_DMA(&huart1, (uint8_t*)debug_tx_buf, len);
+    }
+}
+
+// ===== 阻塞 printf（保留，某些库代码可能还会调用） =====
 int fputc(int ch, FILE *f)
 {
   HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);
@@ -785,7 +816,7 @@ void StartChaoshenbo(void *argument)
     if(yaokong_flag==0)
     {
      distance = chaoshenboceju();
-    printf("chaoshenbo=%04d]", (int)distance);   //在串口监视器上显示距离值，方便调试
+    debug_printf("chaoshenbo=%04d]", (int)distance);   //在串口监视器上显示距离值，方便调试
     if(distance<15)
     {
       osDelay(10);
@@ -986,9 +1017,9 @@ void StartLanyatouchuan(void *argument)
 	    printf("[display,0,36,GZ:%06d]",gz);   //在串口监视器上显示加速度和陀螺仪原始值，方便调试
     }*/
 
-      printf("[display,0,54,%d],[display,15,54,%d],[display,30,54,%d],[display,45,54,%d],[display,60,54,%d],[display,75,54,%d],[display,90,54,%d],[display,105,54,%d]",h1,h2,h3,h4,h5,h6,h7,h8);
-      printf("[plot,%d,%d,%d]",ax,ay,gz);
-      printf("[display,0,0,AX:%06d],[display,0,18,AY:%06d],[display,0,36,GZ:%06d]",ax,ay,gz);    //合并显示命令，减少串口输出次数，提高效率
+      debug_printf("[display,0,54,%d],[display,15,54,%d],[display,30,54,%d],[display,45,54,%d],[display,60,54,%d],[display,75,54,%d],[display,90,54,%d],[display,105,54,%d]",h1,h2,h3,h4,h5,h6,h7,h8);
+      debug_printf("[plot,%d,%d,%d]",ax,ay,gz);
+      debug_printf("[display,0,0,AX:%06d],[display,0,18,AY:%06d],[display,0,36,GZ:%06d]",ax,ay,gz);    //合并显示命令，减少串口输出次数，提高效率
 
   }
     osDelay(1);

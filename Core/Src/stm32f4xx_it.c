@@ -64,6 +64,7 @@ extern TIM_HandleTypeDef htim10;
 
 extern volatile uint8_t RxFlag;  //全局变量，存储接收标志
 extern char Serial_RxPacket[20];  //全局变量，存储从串口接收的数据，以便在Yaokong线程中使用
+extern DMA_HandleTypeDef hdma_usart1_tx;
 
 /* USER CODE END EV */
 
@@ -241,6 +242,20 @@ void DMA2_Stream2_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Stream2_IRQn 1 */
 
   /* USER CODE END DMA2_Stream2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 Stream 7 global interrupt.
+  */
+void DMA2_Stream7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream7_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_tx);
+  /* USER CODE BEGIN DMA2_Stream7_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream7_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

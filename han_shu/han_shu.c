@@ -6,6 +6,9 @@
 #include "han_shu.h"
 #include "cmsis_os2.h"
 #include "stdio.h"
+#include <stdarg.h>
+
+extern void debug_printf(const char *fmt, ...);
 
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim11;
@@ -231,7 +234,7 @@ uint8_t MPU6050_ReadFiltered(MPU6050_Data* data)
             check = 0xFF;
             i2c_ret = HAL_I2C_Mem_Read_IT(&hi2c1, MPU6050_ADDR, WHO_AM_I, 1, &check, 1);
             if(i2c_ret == HAL_OK) i2c_ret = i2c_wait(100);
-            printf("[MPU] WHO_AM_I=0x%02X, I2C_ret=%d (retry left=%d)\r\n",
+            debug_printf("[MPU] WHO_AM_I=0x%02X, I2C_ret=%d (retry left=%d)\r\n",
                    check, (int)i2c_ret, init_retry);
             if(i2c_ret == HAL_OK && check == 0x68) break;
             HAL_Delay(20);
@@ -243,7 +246,7 @@ uint8_t MPU6050_ReadFiltered(MPU6050_Data* data)
         for(wr = 0; wr < 3; wr++) {
             i2c_ret = HAL_I2C_Mem_Write_IT(&hi2c1, MPU6050_ADDR, PWR_MGMT_1, 1, &write_data, 1);
             if(i2c_ret == HAL_OK) { i2c_ret = i2c_wait(100); if(i2c_ret == HAL_OK) break; }
-            printf("[MPU] PWR_MGMT_1 write fail: %d\r\n", (int)i2c_ret);
+            debug_printf("[MPU] PWR_MGMT_1 write fail: %d\r\n", (int)i2c_ret);
             HAL_Delay(10);
         }
         if(i2c_ret != HAL_OK) return 0;
@@ -254,7 +257,7 @@ uint8_t MPU6050_ReadFiltered(MPU6050_Data* data)
         for(wr = 0; wr < 3; wr++) {
             i2c_ret = HAL_I2C_Mem_Write_IT(&hi2c1, MPU6050_ADDR, GYRO_CONFIG, 1, &write_data, 1);
             if(i2c_ret == HAL_OK) { i2c_ret = i2c_wait(100); if(i2c_ret == HAL_OK) break; }
-            printf("[MPU] GYRO_CONFIG write fail: %d\r\n", (int)i2c_ret);
+            debug_printf("[MPU] GYRO_CONFIG write fail: %d\r\n", (int)i2c_ret);
             HAL_Delay(10);
         }
         if(i2c_ret != HAL_OK) return 0;
@@ -264,7 +267,7 @@ uint8_t MPU6050_ReadFiltered(MPU6050_Data* data)
         for(wr = 0; wr < 3; wr++) {
             i2c_ret = HAL_I2C_Mem_Write_IT(&hi2c1, MPU6050_ADDR, ACCEL_CONFIG, 1, &write_data, 1);
             if(i2c_ret == HAL_OK) { i2c_ret = i2c_wait(100); if(i2c_ret == HAL_OK) break; }
-            printf("[MPU] ACCEL_CONFIG write fail: %d\r\n", (int)i2c_ret);
+            debug_printf("[MPU] ACCEL_CONFIG write fail: %d\r\n", (int)i2c_ret);
             HAL_Delay(10);
         }
         if(i2c_ret != HAL_OK) return 0;
@@ -274,7 +277,7 @@ uint8_t MPU6050_ReadFiltered(MPU6050_Data* data)
         for(wr = 0; wr < 3; wr++) {
             i2c_ret = HAL_I2C_Mem_Write_IT(&hi2c1, MPU6050_ADDR, SMPLRT_DIV, 1, &write_data, 1);
             if(i2c_ret == HAL_OK) { i2c_ret = i2c_wait(100); if(i2c_ret == HAL_OK) break; }
-            printf("[MPU] SMPLRT_DIV write fail: %d\r\n", (int)i2c_ret);
+            debug_printf("[MPU] SMPLRT_DIV write fail: %d\r\n", (int)i2c_ret);
             HAL_Delay(10);
         }
         if(i2c_ret != HAL_OK) return 0;
@@ -284,13 +287,13 @@ uint8_t MPU6050_ReadFiltered(MPU6050_Data* data)
         for(wr = 0; wr < 3; wr++) {
             i2c_ret = HAL_I2C_Mem_Write_IT(&hi2c1, MPU6050_ADDR, CONFIG, 1, &write_data, 1);
             if(i2c_ret == HAL_OK) { i2c_ret = i2c_wait(100); if(i2c_ret == HAL_OK) break; }
-            printf("[MPU] CONFIG write fail: %d\r\n", (int)i2c_ret);
+            debug_printf("[MPU] CONFIG write fail: %d\r\n", (int)i2c_ret);
             HAL_Delay(10);
         }
         if(i2c_ret != HAL_OK) return 0;
         
         initialized = 1;
-        printf("[MPU] Init OK, rate=100Hz, gyro=±500dps, accel=±2g\r\n");
+        debug_printf("[MPU] Init OK, rate=100Hz, gyro=±500dps, accel=±2g\r\n");
     }
     
     // 2. 一次性读取所有14个字节（中断模式，带重试）
@@ -298,7 +301,7 @@ uint8_t MPU6050_ReadFiltered(MPU6050_Data* data)
     do {
         i2c_ret = HAL_I2C_Mem_Read_IT(&hi2c1, MPU6050_ADDR, ACCEL_XOUT_H, 1, buffer, 14);
         if(i2c_ret == HAL_OK) { i2c_ret = i2c_wait(100); if(i2c_ret == HAL_OK) break; }
-        printf("[MPU] Data read fail: %d (retry left=%d)\r\n", (int)i2c_ret, rd_retry - 1);
+        debug_printf("[MPU] Data read fail: %d (retry left=%d)\r\n", (int)i2c_ret, rd_retry - 1);
         HAL_Delay(10);
     } while(--rd_retry);
     if(i2c_ret != HAL_OK) return 0;
