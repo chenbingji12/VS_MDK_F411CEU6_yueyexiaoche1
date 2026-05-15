@@ -80,12 +80,12 @@ void RightDianji(int right_speed)
     }
     if(right_speed>0)
     {
-        __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_4,right_speed);
-        __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3,0);
+        __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3,right_speed);
+        __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_4,0);
     }
     else if (right_speed<0) {
-    __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_4,0);
-    __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3,-right_speed);
+    __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3,0);
+    __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_4,-right_speed);
     }
     else {
     __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3,0);

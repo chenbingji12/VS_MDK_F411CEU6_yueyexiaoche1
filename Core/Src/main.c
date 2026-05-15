@@ -375,7 +375,7 @@ debug_printf("System Initialized\r\n");
 
   /* Create the semaphores(s) */
   /* creation of Juli */
-  JuliHandle = osSemaphoreNew(1, 1, &Juli_attributes);
+  JuliHandle = osSemaphoreNew(0, 1, &Juli_attributes);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
@@ -819,7 +819,7 @@ void StartChaoshenbo(void *argument)
     if(yaokong_flag==0)
     {
      distance = chaoshenboceju();
-    debug_printf("chaoshenbo=%04d]", (int)distance);   //在串口监视器上显示距离值，方便调试
+    debug_printf("chaoshenbo=%04d", (int)distance);   //在串口监视器上显示距离值，方便调试
     if(distance<15)
     {
       osDelay(10);
