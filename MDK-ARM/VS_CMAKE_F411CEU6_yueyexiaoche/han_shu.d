@@ -36,3 +36,4 @@ vs_cmake_f411ceu6_yueyexiaoche\han_shu.o: D:\MDK526\ARM\ARMCC\Bin\..\include\mat
 vs_cmake_f411ceu6_yueyexiaoche\han_shu.o: ..\han_shu\han_shu.h
 vs_cmake_f411ceu6_yueyexiaoche\han_shu.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
 vs_cmake_f411ceu6_yueyexiaoche\han_shu.o: D:\MDK526\ARM\ARMCC\Bin\..\include\stdio.h
+vs_cmake_f411ceu6_yueyexiaoche\han_shu.o: D:\MDK526\ARM\ARMCC\Bin\..\include\stdarg.h

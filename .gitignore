@@ -1,3 +1,22 @@
-build
-mx.scratch
-!.settings
+# Keil MDK 编译垃圾（核心！屏蔽.o/.crf等文件）
+*.o
+*.crf
+*.d
+*.lst
+*.map
+*.axf
+*.hex
+*.bin
+*.uvoptx
+*.uvguix*
+build/
+
+# CubeMX 临时文件
+/.cproject
+/.project
+
+# VS Code、系统缓存
+/.vscode/
+.DS_Store
+Thumbs.db
+mx_scratch

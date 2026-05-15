@@ -47,3 +47,4 @@ vs_cmake_f411ceu6_yueyexiaoche\main.o: ../Middlewares/Third_Party/FreeRTOS/Sourc
 vs_cmake_f411ceu6_yueyexiaoche\main.o: ../han_shu/han_shu.h
 vs_cmake_f411ceu6_yueyexiaoche\main.o: D:\MDK526\ARM\ARMCC\Bin\..\include\string.h
 vs_cmake_f411ceu6_yueyexiaoche\main.o: D:\MDK526\ARM\ARMCC\Bin\..\include\stdio.h
+vs_cmake_f411ceu6_yueyexiaoche\main.o: D:\MDK526\ARM\ARMCC\Bin\..\include\stdarg.h

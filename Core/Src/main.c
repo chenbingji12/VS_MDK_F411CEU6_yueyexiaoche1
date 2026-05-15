@@ -254,6 +254,9 @@ void StartJieshou(void *argument);
 
 /* USER CODE BEGIN PFP */
 
+/* DMA非阻塞调试输出函数前置声明 */
+void debug_printf(const char *fmt, ...);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

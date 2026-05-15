@@ -330,7 +330,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     {
       Error_Handler();
     }
-    __HAL_LINKDMA(huart, hmatx, hdma_usart1_tx);
+    __HAL_LINKDMA(huart, hdmatx, hdma_usart1_tx);
 
     /* DMA2_Stream7 interrupt Init */
     HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 5, 0);
