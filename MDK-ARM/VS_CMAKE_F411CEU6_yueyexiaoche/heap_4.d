@@ -1,0 +1,13 @@
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: D:\MDK526\ARM\ARMCC\Bin\..\include\stdlib.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: D:\MDK526\ARM\ARMCC\Bin\..\include\stddef.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: D:\MDK526\ARM\ARMCC\Bin\..\include\stdint.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Core/Inc/FreeRTOSConfig.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+vs_cmake_f411ceu6_yueyexiaoche\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h

@@ -1,0 +1,1 @@
+vs_cmake_f411ceu6_yueyexiaoche\startup_stm32f411xe.o: startup_stm32f411xe.s
