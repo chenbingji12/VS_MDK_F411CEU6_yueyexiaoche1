@@ -47,6 +47,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     BSP/LED/BSP_LED.c
     han_shu/han_shu.c
+    han_shu/ceju.c
+    han_shu/dianji.c
+    han_shu/tuoluoyi.c
+    han_shu/xunji.c
 )
 
 # Add include paths

@@ -26,7 +26,17 @@
 #define h_11111111 11111111 // 11111111: 全部传感器检测到黑线(全黑)
 #define h_00011111 11111//00011111: 传感器0-4检测到黑线
 
-#define yuansudu 60//电机基础转速(原始速度), 作为Dianjisudu()的速度基准值
+extern volatile int yuansudu;//电机基础转速(原始速度), 作为Dianjisudu()的速度基准值
+
+/*小车状态机*/
+typedef enum {
+    STATE_XUNJI,  // 跟随白线
+    STATE_BIZHANG,  // 避障
+    STATE_JIANSUDAI,  // 减速带
+    STATE_XIAPO,  // 下坡
+    STATE_STOP  // 停止
+} CARSTATE;
+extern CARSTATE CarState;  // 初始状态为循迹
 
 /* 循迹控制结构体, 用于存储电机速度控制相关参数*/
 typedef struct
@@ -46,7 +56,15 @@ void cmd_8(void);
 void cmd_9(void);
 void cmd_10(void);
 void cmd_11(void);
+
 void xunji(uint32_t HUIDU);
+void shizilukou(void);
+
+/*减速带函数*/
+void jiansudai(void);
+
+/*下坡函数*/
+void xiapo(void);
 
 /*电机控制函数*/
 void RightDianji(int right_speed);

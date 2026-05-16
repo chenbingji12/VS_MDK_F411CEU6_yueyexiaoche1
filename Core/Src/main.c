@@ -138,46 +138,6 @@ osMessageQueueId_t GZHandle;
 const osMessageQueueAttr_t GZ_attributes = {
   .name = "GZ"
 };
-/* Definitions for H1 */
-osMessageQueueId_t H1Handle;
-const osMessageQueueAttr_t H1_attributes = {
-  .name = "H1"
-};
-/* Definitions for H2 */
-osMessageQueueId_t H2Handle;
-const osMessageQueueAttr_t H2_attributes = {
-  .name = "H2"
-};
-/* Definitions for H3 */
-osMessageQueueId_t H3Handle;
-const osMessageQueueAttr_t H3_attributes = {
-  .name = "H3"
-};
-/* Definitions for H4 */
-osMessageQueueId_t H4Handle;
-const osMessageQueueAttr_t H4_attributes = {
-  .name = "H4"
-};
-/* Definitions for H5 */
-osMessageQueueId_t H5Handle;
-const osMessageQueueAttr_t H5_attributes = {
-  .name = "H5"
-};
-/* Definitions for H6 */
-osMessageQueueId_t H6Handle;
-const osMessageQueueAttr_t H6_attributes = {
-  .name = "H6"
-};
-/* Definitions for H7 */
-osMessageQueueId_t H7Handle;
-const osMessageQueueAttr_t H7_attributes = {
-  .name = "H7"
-};
-/* Definitions for H8 */
-osMessageQueueId_t H8Handle;
-const osMessageQueueAttr_t H8_attributes = {
-  .name = "H8"
-};
 /* Definitions for Shoujifasong */
 osMutexId_t ShoujifasongHandle;
 const osMutexAttr_t Shoujifasong_attributes = {
@@ -190,6 +150,9 @@ const osSemaphoreAttr_t Juli_attributes = {
 };
 /* USER CODE BEGIN PV */
 
+//extern volatile int yuansudu = 60;//电机基础转速(原始速度), 作为Dianjisudu()的速度基准值
+//extern CARSTATE CarState = STATE_XUNJI;  // 初始状态为循迹
+
 volatile uint32_t zhi_2;   //全局变量，存储从消息队列中获取的值，以便在Yundong线程中使用
 
 // --- DMA 非阻塞 printf 相关 ---
@@ -198,8 +161,6 @@ static char debug_tx_buf[384];                   // 格式化缓冲区
 static volatile uint8_t debug_tx_busy = 0;       // DMA 发送忙标志
 volatile int16_t AX,AY,GZ;  //全局变量，存储加速度和陀螺仪原始值，以便在Tuoluoyi线程中使用
 volatile int16_t ax,ay,gz;  //全局变量，存储从消息队列中获取的加速度和陀螺仪原始值，以便在Lanyatouchuan线程中使用
-volatile uint8_t H1,H2,H3,H4,H5,H6,H7,H8;  //全局变量，存储8个灰度传感器通道的读取值，以便在Huidu线程中使用
-volatile uint8_t h1,h2,h3,h4,h5,h6,h7,h8;  //全局变量，存储从消息队列中获取的8个灰度传感器通道的读取值，以便在Lanyatouchuan线程中使用
 volatile uint8_t yaokong_flag=0;  //全局变量，存储遥控标志，以便在Yaokong线程中使用
 volatile char Serial_RxPacket[20];  //全局变量，存储从串口接收的数据，以便在Yaokong线程中使用
 volatile uint8_t RxFlag;  //全局变量，存储接收空闲中断标志
@@ -234,52 +195,6 @@ void debug_printf(const char *fmt, ...);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-/**typedef struct
-{
-  uint32_t huidufenbu;
-  void (*zhixinghanshu)(void);
-} HUIDUFENBU;
-
-void cmd_1(void){Xuanzhuan(-90);}
-void cmd_2(void){Xuanzhuan(90);}
-void cmd_3(void){Dianjisudu(yuansudu, yuansudu+5);}
-void cmd_4(void){Dianjisudu(yuansudu+5, yuansudu);}
-void cmd_5(void){Dianjisudu(yuansudu+15, yuansudu);}
-void cmd_6(void){Dianjisudu(yuansudu, yuansudu+15);}
-void cmd_7(void){Dianjisudu(yuansudu-15, yuansudu+20);}
-void cmd_8(void){Dianjisudu(yuansudu+20, yuansudu-15);}
-void cmd_9(void){Dianjisudu(yuansudu-25, yuansudu+30);}
-void cmd_10(void){Dianjisudu(yuansudu+30, yuansudu-25);}
-void cmd_11(void){Dianjisudu(yuansudu,yuansudu);}
-
-HUIDUFENBU cmd_table[] = {
-  {h_00001111, cmd_1},{h_00011111, cmd_1},
-  {h_11110000, cmd_2},{h_11111000, cmd_2},
-  {h_00010000, cmd_3},
-  {h_00001000, cmd_4},
-  {h_00000100, cmd_5},{h_00001100, cmd_5},
-  {h_00100000, cmd_6},{h_00110000, cmd_6},
-  {h_01000000, cmd_7},{h_01100000, cmd_7},
-  {h_00000010, cmd_8},{h_00000110, cmd_8},
-  {h_10000000, cmd_9},{h_11000000, cmd_9},
-  {h_00000011, cmd_10},{h_00000001, cmd_10}
-};
-
-uint16_t cmd_table_size = sizeof(cmd_table) / sizeof(cmd_table[0]);
-
-void xunji(uint32_t HUIDU)
-{
- for(uint16_t i=0;i<cmd_table_size;i++)
- {
-   if(HUIDU==cmd_table[i].huidufenbu)
-   {
-     cmd_table[i].zhixinghanshu();
-     return;
-   }
- }
- cmd_11();
-}**/
 
 /* USER CODE END 0 */
 
@@ -348,7 +263,7 @@ debug_printf("System Initialized\r\n");
 
   /* Create the semaphores(s) */
   /* creation of Juli */
-  JuliHandle = osSemaphoreNew(0, 1, &Juli_attributes);
+  JuliHandle = osSemaphoreNew(1, 0, &Juli_attributes);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
@@ -370,30 +285,6 @@ debug_printf("System Initialized\r\n");
 
   /* creation of GZ */
   GZHandle = osMessageQueueNew (1, sizeof(int32_t), &GZ_attributes);
-
-  /* creation of H1 */
-  H1Handle = osMessageQueueNew (1, sizeof(uint8_t), &H1_attributes);
-
-  /* creation of H2 */
-  H2Handle = osMessageQueueNew (1, sizeof(uint8_t), &H2_attributes);
-
-  /* creation of H3 */
-  H3Handle = osMessageQueueNew (1, sizeof(uint8_t), &H3_attributes);
-
-  /* creation of H4 */
-  H4Handle = osMessageQueueNew (1, sizeof(uint8_t), &H4_attributes);
-
-  /* creation of H5 */
-  H5Handle = osMessageQueueNew (1, sizeof(uint8_t), &H5_attributes);
-
-  /* creation of H6 */
-  H6Handle = osMessageQueueNew (1, sizeof(uint8_t), &H6_attributes);
-
-  /* creation of H7 */
-  H7Handle = osMessageQueueNew (1, sizeof(uint8_t), &H7_attributes);
-
-  /* creation of H8 */
-  H8Handle = osMessageQueueNew (1, sizeof(uint8_t), &H8_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -827,23 +718,12 @@ void StartHuidu(void *argument)
     uint32_t zhi_1=zonghuiduzhi();
     osMessageQueuePut(ZonghuiduzhiHandle, &zhi_1, 0, 0);    //将总灰度值放入消息队列，供Yundong线程使用
 		
-    H1=huiduzhi(0);
-    osMessageQueuePut(H1Handle, (void*)&H1, 0, 0);
-    H2=huiduzhi(1);
-    osMessageQueuePut(H2Handle, (void*)&H2, 0, 0);
-    H3=huiduzhi(2);
-    osMessageQueuePut(H3Handle, (void*)&H3, 0, 0);
-    H4=huiduzhi(3);
-    osMessageQueuePut(H4Handle, (void*)&H4, 0, 0);
-    H5=huiduzhi(4);
-    osMessageQueuePut(H5Handle, (void*)&H5, 0, 0);
-    H6=huiduzhi(5);
-    osMessageQueuePut(H6Handle, (void*)&H6, 0, 0);
-    H7=huiduzhi(6);
-    osMessageQueuePut(H7Handle, (void*)&H7, 0, 0);
-    H8=huiduzhi(7);
-    osMessageQueuePut(H8Handle, (void*)&H8, 0, 0);    //将8个灰度传感器通道的读取值放入消息队列
-
+    for(int i=0;i<8;i++)
+    {
+      uint8_t H[8];
+      H[i]=huiduzhi(i);
+      debug_printf("[display,%d,54,%d],", i * 15, H[i]);   //在串口监视器上显示每个灰度传感器通道的读取值，方便调试
+    }
     }
     osDelay(5);
   }
@@ -875,25 +755,7 @@ void StartTuoluoyi(void *argument)
     GZ=data.raw_gyro_z;
     osMessageQueuePut(GZHandle, (void*)&GZ, 0, 0);    //将加速度和陀螺仪原始值放入消息队列
 
-    // 使用原始ADC值判断是否倾斜
-    int16_t raw_ay = data.raw_accel_y;
-    if(raw_ay>4000||raw_ay<-4000)
-    {
-      osDelay(10);
-      MPU6050_ReadFiltered(&data);    //再次读取数据确认倾斜
-      raw_ay = data.raw_accel_y;
-      if(raw_ay>4000||raw_ay<-4000)
-      {
-        MPU6050_ReadFiltered(&data);
-        raw_ay = data.raw_accel_y;
-        if(raw_ay>4000||raw_ay<-4000)
-        {
-          Dianjisudu(0, 0);
-          osDelay(100);
-          Zhizou();   //进入直走状态，等待外部干预
-        }
-      }
-    }
+    xiapo();   //调用下坡函数，根据加速度和陀螺仪数据进行下坡处理，提升小车在下坡时的稳定性
   }
     osDelay(10);
   }
@@ -919,25 +781,15 @@ void StartYundong(void *argument)
       
     if(osSemaphoreAcquire(JuliHandle, 0) == osOK)
     {
+      Dianjisudu(0, 0);
+      osDelay(200);
       Xuanzhuan(180);   //如果距离小于15cm，先原地转180度
       osDelay(500);
     }
     else {
       if(osMessageQueueGet(ZonghuiduzhiHandle, (void*)&zhi_2, NULL, 0) == osOK)
       {
-        /*switch (zhi_2) {
-      case h_00001111: case h_00011111: Xuanzhuan(-90); break;
-      case h_11110000: case h_11111000: Xuanzhuan(90); break;
-      case h_00010000: Dianjisudu(yuansudu, yuansudu+5); break;
-      case h_00001000: Dianjisudu(yuansudu+5, yuansudu); break;
-      case h_00000100: case h_00001100: Dianjisudu(yuansudu+15, yuansudu); break;
-      case h_00110000: case h_00100000: Dianjisudu(yuansudu, yuansudu+15); break;
-      case h_01000000: case h_01100000: Dianjisudu(yuansudu-15, yuansudu+20); break;
-      case h_00000010: case h_00000110: Dianjisudu(yuansudu+20, yuansudu-15); break;
-      case h_00000001: case h_00000011: Dianjisudu(yuansudu+30, yuansudu-25); break;
-      case h_11000000: case h_10000000: Dianjisudu(yuansudu-25, yuansudu+30); break;
-      default: Dianjisudu(yuansudu, yuansudu); break;
-    }*/
+        shizilukou();   //执行十字路口处理函数
     xunji(zhi_2);   //根据总灰度值执行对应的运动命令
       }
   }
@@ -963,40 +815,9 @@ void StartLanyatouchuan(void *argument)
   {
     if(yaokong_flag==0)
     {
-      
-    /*if(osMessageQueueGet(H1Handle, (void*)&h1, NULL, 0) == osOK &&
-       osMessageQueueGet(H2Handle, (void*)&h2, NULL, 0) == osOK &&
-       osMessageQueueGet(H3Handle, (void*)&h3, NULL, 0) == osOK &&
-       
-       osMessageQueueGet(H4Handle, (void*)&h4, NULL, 0) == osOK &&
-       osMessageQueueGet(H5Handle, (void*)&h5, NULL, 0) == osOK &&
-       osMessageQueueGet(H6Handle, (void*)&h6, NULL, 0) == osOK &&
-       osMessageQueueGet(H7Handle, (void*)&h7, NULL, 0) == osOK &&
-       osMessageQueueGet(H8Handle, (void*)&h8, NULL, 0) == osOK)
-    {
-      printf("[display,0,54,%d]", h1);
-      printf("[display,15,54,%d]", h2);
-      printf("[display,30,54,%d]", h3);
-      printf("[display,45,54,%d]", h4);
-      printf("[display,60,54,%d]", h5);
-      printf("[display,75,54,%d]", h6);
-      printf("[display,90,54,%d]", h7);
-      printf("[display,105,54,%d]", h8);    //在串口监视器上显示8个灰度传感器的数值，方便调试
-    }
-    if(osMessageQueueGet(AXHandle, (void*)&ax, NULL, 0) == osOK &&
-       osMessageQueueGet(AYHandle, (void*)&ay, NULL, 0) == osOK &&
-       osMessageQueueGet(GZHandle, (void*)&gz, NULL, 0) == osOK)
-    {
-      printf("[plot,%d,%d,%d]",ax,ay,gz);    //发送加速度和陀螺仪原始值到串口监视器的Plot功能，可以实时观察数据变化趋势
-      printf("[display,0,0,AX:%06d]",ax);
-	    printf("[display,0,18,AY:%06d]",ay);
-	    printf("[display,0,36,GZ:%06d]",gz);   //在串口监视器上显示加速度和陀螺仪原始值，方便调试
-    }*/
-
-      debug_printf("[display,0,54,%d],[display,15,54,%d],[display,30,54,%d],[display,45,54,%d],[display,60,54,%d],[display,75,54,%d],[display,90,54,%d],[display,105,54,%d]",h1,h2,h3,h4,h5,h6,h7,h8);
       debug_printf("[plot,%d,%d,%d]",ax,ay,gz);
-      debug_printf("[display,0,0,AX:%06d],[display,0,18,AY:%06d],[display,0,36,GZ:%06d]",ax,ay,gz);    //合并显示命令，减少串口输出次数，提高效率
-
+      debug_printf("[display,0,0,AX:%05d],[display,0,18,AY:%05d],[display,0,36,GZ:%05d]",ax,ay,gz);
+          //合并显示命令，减少串口输出次数，提高效率
   }
     osDelay(1);
   }
